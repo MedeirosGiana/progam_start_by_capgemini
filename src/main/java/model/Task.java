@@ -14,9 +14,10 @@ import java.util.Date;
 public class Task {
     private Integer id;
     private Integer idProjects;
+    private String name;
     private String description;
-    private String notes;
     private Boolean completed;
+    private String notes;   
     private Date deadline;
     private Date createdAt;
     private Date updatedAt;
@@ -24,12 +25,13 @@ public class Task {
     public Task(){
     }
 
-    public Task(Integer id, Integer idProjects, String description,String notes, Boolean completed, Date deadline, Date createdAt, Date updatedAt) {
+    public Task(Integer id, Integer idProjects, String name, String description, Boolean completed, String notes, Date deadline, Date createdAt, Date updatedAt) {
         this.id = id;
         this.idProjects = idProjects;
+        this.name = name;
         this.description = description;
-        this.notes = notes;
         this.completed = completed;
+        this.notes = notes;
         this.deadline = deadline;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
@@ -47,8 +49,16 @@ public class Task {
         return idProjects;
     }
 
-    public void setIdprojects(Integer idprojects) {
-        this.idProjects = idprojects;
+    public void setIdProjects(Integer idProjects) {
+        this.idProjects = idProjects;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getDescription() {
@@ -59,21 +69,20 @@ public class Task {
         this.description = description;
     }
 
-    public String getNotes() {
-        return notes;
-    }
-
-    public void setNotes(String notes) {
-        this.notes = notes;
-    }
-    
-
     public Boolean getCompleted() {
         return completed;
     }
 
     public void setCompleted(Boolean completed) {
         this.completed = completed;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
     }
 
     public Date getDeadline() {
@@ -102,8 +111,7 @@ public class Task {
 
     @Override
     public String toString() {
-        return "Task{" + "id=" + id + ", idprojects=" + idProjects + ", description=" + description + ", notes=" + notes + ", completed=" + completed + ", deadline=" + deadline + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + '}';
-    }
-    
+        return "Task{" + "id=" + id + ", idProjects=" + idProjects + ", name=" + name + ", description=" + description + ", completed=" + completed + ", notes=" + notes + ", deadline=" + deadline + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + '}';
+    }    
     
 }
