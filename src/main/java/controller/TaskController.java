@@ -6,6 +6,7 @@
 package controller;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
@@ -19,8 +20,10 @@ import util.ConnectionFactory;
 public class TaskController {
     public void save(Task task) throws SQLException{
         String sql = "INSERT INTO tasks (idProject,"
+                + "name,"
                 + "description,"
                 + "completed,"
+                + "notes,"
                 + "deadline,"
                 + "createdAt,"
                 + "updatedAt) VALUES (?,?,?,?,?,?,?,?)";
@@ -29,11 +32,25 @@ public class TaskController {
         PreparedStatement statement = null;
         
         try{
-            
-        } catch(SQLException e){
-            throw new SQLException("Erro ao deletar a tarefa");
-           }
+            connection = ConnectionFactory.getConnection();
+            statement = connection.prepareStatement(sql);
+            statement.setInt(1,task.getIdProjects());
+            statement.setString(2, task.getName());
+            statement.setString(3, task.getDescription());
+            statement.setBoolean(4,task.getCompleted());
+            statement.setString(5, task.getNotes());
+            statement.setDate(6, new Date(task.getDeadline().getTime()));
+            statement.setDate(7, new Date(task.getCreatedAt().getTime()));
+            statement.setDate(7, new Date(task.getUpdatedAt().getTime()));
+            statement.execute();
+        } catch(Exception e){
+            throw new RuntimeException("Erro ao deletar a tarefa");
+           }  finally{
+            ConnectionFactory.closeConnection(connection,statement);        
+        } 
     }
+    
+    
     
     public void update(Task task){
         
@@ -51,10 +68,13 @@ public class TaskController {
             statement = connection.prepareStatement(sql);
             statement.setInt(1,taskId);
             statement.execute();            
-        } catch(SQLException e){
-            throw new SQLException("Erro ao deletar a tarefa");
-           }
+        } catch(Exception e){
+            throw new RuntimeException("Erro ao deletar a tarefa");
+           } finally{
+            ConnectionFactory.closeConnection(connection, statement);        
         } 
+    }
+    
     
     public List<Task> getAll(int idProject){
         return null;
