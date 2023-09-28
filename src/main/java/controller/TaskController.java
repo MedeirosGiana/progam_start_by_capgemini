@@ -21,7 +21,7 @@ import util.ConnectionFactory;
  */
 public class TaskController {
 
-    public void save(Task task) throws SQLException {
+    public void save(Task task) throws SQLException, ClassNotFoundException {
         String sql = "INSERT INTO tasks (idProject,"
                 + "name,"
                 + "description,"
@@ -35,8 +35,11 @@ public class TaskController {
         PreparedStatement statement = null;
 
         try {
+            //estabelece a conexão com o banco de dados
             connection = ConnectionFactory.getConnection();
+            //prepara o sql
             statement = connection.prepareStatement(sql);
+            //seta os valores no statement
             statement.setInt(1, task.getIdProjects());
             statement.setString(2, task.getName());
             statement.setString(3, task.getDescription());
@@ -46,14 +49,14 @@ public class TaskController {
             statement.setDate(7, new Date(task.getCreatedAt().getTime()));
             statement.setDate(8, new Date(task.getUpdatedAt().getTime()));
             statement.execute();
-        } catch (Exception e) {
-            throw new RuntimeException("Erro ao inserir a tarefa" + e.getMessage());
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao salvar a tarefa" + e.getMessage(), e);
         } finally {
             ConnectionFactory.closeConnection(connection, statement);
         }
     }
 
-    public void update(Task task) {
+    public void update(Task task) throws ClassNotFoundException {
         String sql = "UPDATE tasks SET  "
                 + "idProject = ?,"
                 + "name = ?,"
@@ -61,15 +64,19 @@ public class TaskController {
                 + "completed = ?,"
                 + "notes = ?,"
                 + "deadline = ?,"
-                + "createdAt = ?"
-                + "WERE id = ? ";
+                + "createdAt = ?,"
+                + "updateAt = ?"
+               + "WHERE id = ? ";
 
         Connection connection = null;
         PreparedStatement statement = null;
 
         try {
+            //estabelecendo conexão com o banco de dados
             connection = ConnectionFactory.getConnection();
+            //preparando a query
             statement = connection.prepareStatement(sql);
+            //setando os valores do statement
             statement.setInt(1, task.getIdProjects());
             statement.setString(2, task.getName());
             statement.setString(3, task.getDescription());
@@ -78,39 +85,23 @@ public class TaskController {
             statement.setDate(6, new Date(task.getDeadline().getTime()));
             statement.setDate(7, new Date(task.getCreatedAt().getTime()));
             statement.setDate(8, new Date(task.getUpdatedAt().getTime()));
+            statement.setInt(9,task.getId());
+            //executando a query
             statement.execute();
 
-        } catch (Exception e) {
-            throw new RuntimeException("Erro ao atualizar a tarefa" + e.getMessage());
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao atualizar a tarefa" + e.getMessage(), e);
         } finally {
             ConnectionFactory.closeConnection(connection, statement);
         }
     }
 
-    public void deleteById(int taskId) throws SQLException {
-        String sql = "DELETE FROM tasks WHERE id = ?";
-
-        Connection connection = null;
-        PreparedStatement statement = null;
-
-        try {
-            connection = ConnectionFactory.getConnection();
-            statement = connection.prepareStatement(sql);
-            statement.setInt(1, taskId);
-            statement.execute();
-        } catch (Exception e) {
-            throw new RuntimeException("Erro ao deletar a tarefa" + e.getMessage());
-        } finally {
-            ConnectionFactory.closeConnection(connection, statement);
-        }
-    }
-
-    public List<Task> getAll(int idProject) {
+    public List<Task> getAll(int idProject) throws ClassNotFoundException {
         String sql = "SELECT * FROM tasks WHERE idProject = ?";
         Connection connection = null;
         PreparedStatement statement = null;
         ResultSet resultSet = null;
-        List<Task> listTasks = new ArrayList<Task>();
+        List<Task> listTasks = new ArrayList<>();
         
         try{
             connection = ConnectionFactory.getConnection();
@@ -133,8 +124,8 @@ public class TaskController {
                 listTasks.add(task);
             }
             
-        } catch (Exception e) {
-            throw new RuntimeException("Erro ao listar a tarefa" + e.getMessage());
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao listar a tarefa" + e.getMessage(), e);
         } finally {
             ConnectionFactory.closeConnection(connection, statement, resultSet);
         }
@@ -142,4 +133,22 @@ public class TaskController {
         return listTasks;
     }
 
+    
+     public void deleteById(int taskId) throws SQLException, ClassNotFoundException {
+        String sql = "DELETE FROM tasks WHERE id = ?";
+
+        Connection connection = null;
+        PreparedStatement statement = null;
+
+        try {
+            connection = ConnectionFactory.getConnection();
+            statement = connection.prepareStatement(sql);
+            statement.setInt(1, taskId);
+            statement.execute();
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao deletar a tarefa" + e.getMessage(), e);
+        } finally {
+            ConnectionFactory.closeConnection(connection, statement);
+        }
+    }
 }
